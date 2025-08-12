@@ -37,7 +37,7 @@ process CALCULATE_STATISTICS {
 
     ## Calculate summary statistics
     samtools coverage ${bam_file} > samtools_coverage_${bam_file.baseName}.txt
-    csvtk grep -t -f3 -p 16569 -C '\$' samtools_coverage_${bam_file.baseName}.txt -T -o mtdna.txt --num-cpus ${task.cpus} 
+    csvtk grep -t -f1 -p MT -C '\$' samtools_coverage_${bam_file.baseName}.txt -T -o mtdna.txt --num-cpus ${task.cpus} 
         
     contig=\$(csvtk cut -t -f 1 mtdna.txt --num-cpus ${task.cpus})
     numreads=\$(csvtk cut -t -f 4 mtdna.txt --num-cpus ${task.cpus})
@@ -58,7 +58,7 @@ process CALCULATE_STATISTICS {
     echo -e "${bam_file}\tMeanMapQuality\t\${mean_map_quality}" >> $output_name
     echo -e "${bam_file}\tRG\t\${readgroup}" >> $output_name
 
-    fastqc --threads ${task.cpus} --memory ${avail_mem} $bam_file -o .
+    fastqc --threads ${task.cpus} -Xmx64g $bam_file -o .
 
     """
 }
